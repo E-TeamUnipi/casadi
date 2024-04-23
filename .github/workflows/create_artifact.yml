@@ -6,17 +6,21 @@ jobs:
   create_build_artifact:
     runs-on: ubuntu-22.04
     steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install gcc g++ gfortran ninja-build git cmake liblapack-dev pkg-config --install-recommends -y
+
       - uses: actions/checkout@v4
         with:
           ref: 3.6.3
 
       - name: Build casadi
         run: |
-          install_prefix=$(pwd)/casadi_install/
-          mkdir -p ${install_prefix}
+          mkdir -p casadi_install
           mkdir build
           cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${install_prefix}
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=casadi_install
           cd ..
           cmake --build build
           cmake --install build
@@ -25,5 +29,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: casadi_v3.6.3
-          path: ${install_prefix}
+          path: casadi_install
           overwrite: true
+          if-no-files-found: error
