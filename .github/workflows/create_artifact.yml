@@ -28,7 +28,7 @@ jobs:
           cd ..
           cmake --build build
           cmake --install build
-          zip casadi_v${{ env.CASADI_VERSION }}.zip ${{ env.INSTALL_DIR }}
+          zip -r casadi_v${{ env.CASADI_VERSION }}.zip ${{ env.INSTALL_DIR }}
 
       - name: Create release
         id: create_release
