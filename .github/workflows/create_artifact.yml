@@ -4,7 +4,7 @@ on: [workflow_dispatch]
 
 env:
   CASADI_VERSION: 3.6.3
-  ASSET_NAME: casadi_install
+  INSTALL_DIR: casadi_install
 
 jobs:
   create_release_asset:
@@ -21,14 +21,14 @@ jobs:
 
       - name: Build casadi
         run: |
-          mkdir -p ${{ env.ASSET_NAME }}
+          mkdir -p ${{ env.INSTALL_DIR }}
           mkdir build
           cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/${{ env.ASSET_NAME }}
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/${{ env.INSTALL_DIR }}
           cd ..
           cmake --build build
           cmake --install build
-          zip ${{ env.ASSET_NAME }}.zip ${{ env.ASSET_NAME }}
+          zip casadi_v${{ env.CASADI_VERSION }}.zip ${{ env.INSTALL_DIR }}
 
       - name: Create release
         id: create_release
@@ -45,6 +45,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: create_release
-          asset_name: casadi_v${{ env.CASADI_VERSION }}
+          asset_path: casadi_v${{ env.CASADI_VERSION }}.zip
+          asset_name: casadi_v${{ env.CASADI_VERSION }}.zip
           asset_content_type: application/zip
