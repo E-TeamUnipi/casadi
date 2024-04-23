@@ -20,7 +20,7 @@ jobs:
           mkdir -p casadi_install
           mkdir build
           cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=casadi_install
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/casadi_install
           cd ..
           cmake --build build
           cmake --install build
