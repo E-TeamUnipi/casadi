@@ -1,4 +1,4 @@
-name: Create release asset
+name: Release with artifact
 
 on: [workflow_dispatch]
 
@@ -7,7 +7,7 @@ env:
   INSTALL_DIR: casadi_install
 
 jobs:
-  create_release_asset:
+  release_with_artifact:
     runs-on: ubuntu-22.04
     steps:
       - name: Install dependencies
@@ -19,7 +19,7 @@ jobs:
         with:
           ref: ${{ env.CASADI_VERSION }}
 
-      - name: Build casadi
+      - name: Build and zip
         run: |
           mkdir -p ${{ env.INSTALL_DIR }}
           mkdir build
