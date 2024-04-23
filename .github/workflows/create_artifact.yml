@@ -1,9 +1,13 @@
-name: Create artifact
+name: Release with artifact
 
 on: [workflow_dispatch]
 
+env:
+  CASADI_VERSION: 3.6.3
+  INSTALL_DIR: casadi_install
+
 jobs:
-  create_build_artifact:
+  release_with_artifact:
     runs-on: ubuntu-22.04
     steps:
       - name: Install dependencies
@@ -13,22 +17,34 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          ref: 3.6.3
+          ref: ${{ env.CASADI_VERSION }}
 
-      - name: Build casadi
+      - name: Build and zip
         run: |
-          mkdir -p casadi_install
+          mkdir -p ${{ env.INSTALL_DIR }}
           mkdir build
           cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/casadi_install
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/${{ env.INSTALL_DIR }}
           cd ..
           cmake --build build
           cmake --install build
+          zip -r casadi_v${{ env.CASADI_VERSION }}.zip ${{ env.INSTALL_DIR }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: casadi_v3.6.3
-          path: casadi_install
-          overwrite: true
-          if-no-files-found: error
+          tag_name: v${{ env.CASADI_VERSION }}
+          release_name: Casadi v${{ env.CASADI_VERSION }}
+
+      - name: Upload asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: casadi_v${{ env.CASADI_VERSION }}.zip
+          asset_name: casadi_v${{ env.CASADI_VERSION }}.zip
+          asset_content_type: application/zip
