@@ -1,0 +1,29 @@
+name: Create artifact
+
+on: [workflow_dispatch]
+
+jobs:
+  create_build_artifact:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 3.6.3
+
+      - name: Build casadi
+        run: |
+          install_prefix=$(pwd)/casadi_install/
+          mkdir -p ${install_prefix}
+          mkdir build
+          cd build
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${install_prefix}
+          cd ..
+          cmake --build build
+          cmake --install build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: casadi_v3.6.3
+          path: ${install_prefix}
+          overwrite: true
