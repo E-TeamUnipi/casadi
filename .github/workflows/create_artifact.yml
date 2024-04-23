@@ -8,8 +8,8 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install gcc g++ gfortran ninja-build git cmake liblapack-dev pkg-config --install-recommends -y
+          sudo apt-get update
+          sudo apt-get install gcc g++ gfortran ninja-build git cmake liblapack-dev pkg-config --install-recommends -y
 
       - uses: actions/checkout@v4
         with:
