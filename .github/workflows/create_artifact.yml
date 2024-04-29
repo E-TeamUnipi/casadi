@@ -30,6 +30,17 @@ jobs:
           cmake --install build
           zip ${{ env.ASSET_NAME }}.zip ${{ env.ASSET_NAME }}
 
+      - name: Build casadi (static)
+        run: |
+          mkdir -p $${{ env.ASSET_NAME }}-static
+          mkdir build
+          cd build
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/${{ env.ASSET_NAME }}-static
+          cd ..
+          cmake --build build
+          cmake --install build
+          zip ${{ env.ASSET_NAME }}-static.zip ${{ env.ASSET_NAME }}-static
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -47,4 +58,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: create_release
           asset_name: casadi_v${{ env.CASADI_VERSION }}
+          asset_content_type: application/zip
+      
+      - name: Upload asset (static)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: create_release
+          asset_name: casadi_v${{ env.CASADI_VERSION }}-static.zip
           asset_content_type: application/zip
