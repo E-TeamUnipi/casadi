@@ -33,6 +33,7 @@ jobs:
       - name: Build casadi (static)
         run: |
           mkdir -p ${{ env.ASSET_NAME }}-static
+          rm -rf build
           mkdir build
           cd build
           cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF -DENABLE_STATIC=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/${{ env.ASSET_NAME }}-static
