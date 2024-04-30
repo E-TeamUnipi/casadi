@@ -3,7 +3,7 @@ name: Create release asset
 on: [workflow_dispatch]
 
 env:
-  CASADI_VERSION: 3.6.3
+  CASADI_VERSION: v3.6.3
   ASSET_NAME: casadi_install
 
 jobs:
